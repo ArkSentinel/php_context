@@ -1,21 +1,23 @@
 <?php
-// connect to the database to get the PDO instance
-require 'conexion.php';
+require_once '../src/Database.php';
+require_once '../src/functions.php';
+
+$pdo = Database::getInstance()->getConnection();
 
 $query = $pdo->query('SELECT id_estadio, nombre, ciudad, capacidad, url_imagen FROM estadios');
 $estadios_raw = $query->fetchAll(PDO::FETCH_ASSOC);
 $estadios_json = json_encode($estadios_raw);
 ?>
 
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Estadios | Jabulani Files</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/style.css">
 
     <style>
         body {
@@ -23,42 +25,12 @@ $estadios_json = json_encode($estadios_raw);
                 url('https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHAwNG9uaG5sdmhvMHY2dmFxajd5eXE2OGJjNXFoZHMwY3d1cndjMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/6uqz4G16YT8u80b7aX/giphy.gif');
             background-size: 400px;
             background-attachment: fixed;
-            color: #ffffff !important;
+            color: #ffffff;
             font-family: 'Segoe UI', sans-serif;
             min-height: 100vh;
         }
 
-        h2, h3, h5, p, span, a, i {
-            color: #ffffff !important;
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .list-group-item {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            margin-bottom: 8px;
-            border-radius: 12px !important;
-            transition: 0.3s;
-            cursor: pointer;
-        }
-
-        .list-group-item:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
-            transform: translateX(5px);
-        }
-
-        .list-group-item.active {
-            background: linear-gradient(180deg, #ff0000 0%, #8b0000 100%) !important;
-            border: 1px solid #ffffff !important;
-            box-shadow: 0 0 15px rgba(255, 0, 0, 0.8);
-        }
+        h2, h3, h5, p, span, a, i { color: #ffffff !important; }
 
         .card-aero {
             background: rgba(255, 255, 255, 0.1);
@@ -92,7 +64,6 @@ $estadios_json = json_encode($estadios_raw);
             display: block;
         }
 
-        /* Estilos para la imagen del estadio */
         .stadium-image-container {
             position: relative;
             padding: 10px;
@@ -108,13 +79,11 @@ $estadios_json = json_encode($estadios_raw);
             border-radius: 15px;
             border: 1px solid rgba(255, 255, 255, 0.4);
             box-shadow: 0 0 20px rgba(0, 242, 255, 0.3);
-            transition: opacity 0.4s ease-in-out;
         }
     </style>
 </head>
-
 <body>
-    <?php include './componentes/navbar.php' ?>
+    <?php include '../views/layouts/navbar.php'; ?>
 
     <div class="container mt-4">
         <h2 class="mb-4 fw-bold">
@@ -123,13 +92,13 @@ $estadios_json = json_encode($estadios_raw);
 
         <div class="row">
             <div class="col-md-4 mb-4">
-                <div class="glass-panel p-3">
+                <div class="glass p-3">
                     <h5 class="mb-3 border-bottom pb-2">RECINTOS</h5>
                     <div class="list-group" id="lista-estadios">
                         <?php foreach ($estadios_raw as $es): ?>
                         <a class="list-group-item list-group-item-action estadio-item"
                             data-id="<?= $es['id_estadio'] ?>">
-                            <i class="bi bi-building-fill me-2"></i> <?= htmlspecialchars($es['nombre']) ?>
+                            <i class="bi bi-building-fill me-2"></i> <?= h($es['nombre']) ?>
                         </a>
                         <?php endforeach; ?>
                     </div>
@@ -166,17 +135,15 @@ $estadios_json = json_encode($estadios_raw);
                     </div>
                 </div>
 
-                <div id="mensaje-ayuda" class="glass-panel text-center py-5">
+                <div id="mensaje-ayuda" class="glass text-center py-5">
                     <i class="bi bi-search d-block mb-3 display-4"></i>
-                    <h5>SELECCIONE UN ESTADIO PARA DESENCRIPTAR INFORMACIÓN</h5>
+                    <h5>SELECCIONE UN ESTADIO PARA VER INFORMACIÓN</h5>
                 </div>
             </div>
         </div>
     </div>
 
-    <?php include './componentes/footer.php' ?>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <?php include '../views/layouts/footer.php'; ?>
 
     <script>
     const estadiosData = <?php echo $estadios_json; ?>;
@@ -191,29 +158,24 @@ $estadios_json = json_encode($estadios_raw);
             item.addEventListener('click', function(e) {
                 e.preventDefault();
 
-                // Estética de selección
                 items.forEach(i => i.classList.remove('active'));
                 this.classList.add('active');
 
-                // Obtener datos
                 const estadioId = this.getAttribute('data-id');
                 const estadio = estadiosData.find(est => est.id_estadio == estadioId);
 
                 if (estadio) {
-                    // Llenar textos
                     document.getElementById('det-nombre').textContent = estadio.nombre;
                     document.getElementById('det-ciudad').textContent = estadio.ciudad;
                     document.getElementById('det-capacidad').textContent =
                         new Intl.NumberFormat().format(estadio.capacidad) + " Espectadores";
 
-                    // Cambiar imagen
                     if (estadio.url_imagen && estadio.url_imagen.trim() !== "") {
                         fotoEstadio.src = estadio.url_imagen;
                     } else {
                         fotoEstadio.src = 'https://via.placeholder.com/800x400/300000/FFFFFF?text=Imagen+No+Disponible';
                     }
 
-                    // Mostrar panel
                     card.style.display = 'block';
                     mensaje.style.display = 'none';
                 }

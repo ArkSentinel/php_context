@@ -1,20 +1,21 @@
 <?php
 session_start();
-require 'conexion.php';
+require_once 'Database.php';
+
+$pdo = Database::getInstance()->getConnection();
 
 if($_SERVER['REQUEST_METHOD'] == 'POST') {
     $email = $_POST['email'];
     $password = $_POST['password']; 
 
-    //1- Se busca al usuario
-    $stmt = $pdo -> prepare("SELECT * FROM usuarios WHERE email = ?");
-    $stmt ->execute([$email]);
-    $user = $stmt ->fetch();
+    $stmt = $pdo->prepare("SELECT * FROM usuarios WHERE email = ?");
+    $stmt->execute([$email]);
+    $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
-        header("Location: crudequipos.php");
+        header("Location: /admin/equipos.php");
         exit;
     } else {
         echo "Email o contraseña incorrectos";
