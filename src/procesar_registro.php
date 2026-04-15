@@ -1,5 +1,6 @@
 <?php 
-require_once 'Database.php';
+ob_start();
+require_once __DIR__ . '/Database.php';
 
 $pdo = Database::getInstance()->getConnection();
 
@@ -46,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             ':password' => $passwordHash
         ]);
         
+        ob_end_clean();
         header("Location: /login.php?registered=1");
         exit;
     } catch (PDOException $e) {

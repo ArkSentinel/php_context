@@ -1,6 +1,7 @@
 <?php
 session_start();
-require_once 'Database.php';
+ob_start();
+require_once __DIR__ . '/Database.php';
 
 $pdo = Database::getInstance()->getConnection();
 
@@ -15,6 +16,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($user && password_verify($password, $user['password'])) {
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['user_email'] = $user['email'];
+        ob_end_clean();
         header("Location: /admin/equipos.php");
         exit;
     } else {
