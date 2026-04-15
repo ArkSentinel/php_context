@@ -47,6 +47,12 @@
     <div class="login-card">
         <h2 class="brand-title">Jabulani Files</h2>
         <p class="text-center text-muted">Ingresa a la base de datos</p>
+
+        <?php if (isset($_GET['registered'])): ?>
+            <div class="alert alert-success py-2 mb-3 text-center">
+                <i class="bi bi-check-circle"></i> Cuenta creada exitosamente. ¡Inicia sesión!
+            </div>
+        <?php endif; ?>
         
         <form action="/src/procesar_login.php" method="POST">
             <div class="mb-3">
@@ -61,6 +67,10 @@
 
             <div class="d-grid">
                 <button type="submit" class="btn btn-jabulani btn-lg">Entrar</button>
+            </div>
+
+            <div class="d-grid mt-2">
+                <a href="/register.php" class="btn btn-outline-primary btn-lg">Crear Cuenta</a>
             </div>
         </form>
 
