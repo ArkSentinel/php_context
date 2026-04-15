@@ -39,6 +39,11 @@ try {
             font-family: 'Segoe UI', sans-serif;
             min-height: 100vh;
         }
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.6); }
 
         .carousel-container { padding: 40px 0; }
 

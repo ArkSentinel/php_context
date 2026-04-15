@@ -1,4 +1,10 @@
 <?php 
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /login.php");
+    exit;
+}
+
 require_once '../../src/Database.php';
 require_once '../../src/functions.php';
 
@@ -142,6 +148,12 @@ $equipos = $pdo->query("SELECT e.*, ent.nombre as nom_ent, ent.apellido as ape_e
         }
 
         .text-cyan { color: var(--aero-cyan) !important; }
+        
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.6); }
     </style>
 </head>
 <body>

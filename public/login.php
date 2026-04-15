@@ -1,3 +1,10 @@
+<?php
+session_start();
+if (isset($_SESSION['user_id'])) {
+    header("Location: /admin/equipos.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -40,6 +47,8 @@
             text-align: center;
             margin-bottom: 1.5rem;
         }
+        .form-control { color: #000 !important; }
+        .form-control::placeholder { color: #666 !important; }
     </style>
 </head>
 <body>
@@ -57,12 +66,12 @@
         <form action="/src/procesar_login.php" method="POST">
             <div class="mb-3">
                 <label for="email" class="form-label text-dark">Email</label>
-                <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com" required>
+                <input type="email" class="form-control" id="email" name="email" placeholder="nombre@ejemplo.com" style="color: #000;" required>
             </div>
 
             <div class="mb-4">
                 <label for="password" class="form-label text-dark">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="••••••••" style="color: #000;" required>
             </div>
 
             <div class="d-grid">

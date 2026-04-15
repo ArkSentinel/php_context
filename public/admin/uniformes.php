@@ -1,4 +1,10 @@
 <?php 
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /login.php");
+    exit;
+}
+
 require_once '../../src/Database.php';
 require_once '../../src/functions.php';
 
@@ -83,6 +89,11 @@ $uniformes = $pdo->query("SELECT * FROM uniformes ORDER BY id_uniforme DESC")->f
             border: 1px solid var(--aero-cyan);
         }
         .data-label { color: var(--aero-cyan); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.6); }
     </style>
 </head>
 <body>

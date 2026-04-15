@@ -1,4 +1,10 @@
 <?php 
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /login.php");
+    exit;
+}
+
 require_once '../../src/Database.php';
 require_once '../../src/functions.php';
 
@@ -78,6 +84,11 @@ $estadios = $pdo->query("SELECT * FROM estadios ORDER BY nombre ASC")->fetchAll(
             color: white;
         }
         .data-label { color: var(--aero-cyan); font-size: 0.75rem; font-weight: bold; }
+        .form-control, .form-select {
+            background: rgba(255, 255, 255, 0.15) !important;
+            color: #fff !important;
+        }
+        .form-control::placeholder { color: rgba(255,255,255,0.6); }
     </style>
 </head>
 <body>
