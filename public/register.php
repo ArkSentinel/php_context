@@ -36,6 +36,9 @@
             text-align: center;
             margin-bottom: 1.5rem;
         }
+        .form-control::placeholder {
+            color: #666 !important;
+        }
     </style>
 </head>
 <body>
@@ -47,22 +50,22 @@
         <form action="/src/procesar_registro.php" method="POST">
             <div class="mb-3">
                 <label for="nombre" class="form-label text-dark">Nombre</label>
-                <input type="text" class="form-control" id="nombre" name="nombre" required>
+                <input type="text" class="form-control" id="nombre" name="nombre" style="color: #000;" required>
             </div>
 
             <div class="mb-3">
                 <label for="email" class="form-label text-dark">Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
+                <input type="email" class="form-control" id="email" name="email" style="color: #000;" required>
             </div>
 
             <div class="mb-3">
                 <label for="password" class="form-label text-dark">Contraseña</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="Mínimo 4 caracteres" required>
+                <input type="password" class="form-control" id="password" name="password" placeholder="Mínimo 4 caracteres" style="color: #000;" required>
             </div>
 
             <div class="mb-4">
                 <label for="confirm_password" class="form-label text-dark">Confirmar Contraseña</label>
-                <input type="password" class="form-control" id="confirm_password" name="confirm_password" required>
+                <input type="password" class="form-control" id="confirm_password" name="confirm_password" style="color: #000;" required>
             </div>
 
             <div class="d-grid">
