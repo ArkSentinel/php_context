@@ -108,7 +108,7 @@ try {
                     <div class="carousel-item <?= $i == 0 ? 'active' : '' ?>">
                         <div class="d-flex justify-content-center align-items-center mb-5">
                             <?php foreach ($grupo as $eq): ?>
-                            <img src="<?= h($eq['log_url']) ?>" class="img-carousel" alt="Logo de <?= h($eq['nombre']) ?>">
+                            <img src="<?= !empty($eq['log_url']) ? 'data:image/jpeg;base64,' . base64_encode($eq['log_url']) : '' ?>" class="img-carousel" alt="Logo de <?= h($eq['nombre']) ?>">
                             <?php endforeach; ?>
                         </div>
                     </div>
@@ -137,8 +137,8 @@ try {
                             data-apodo="<?= h($eq['apodo']) ?>"
                             data-dt="<?= h($eq['dt_nom'].' '.$eq['dt_ape']) ?>"
                             data-est="<?= h($eq['est_nom']) ?>" 
-                            data-img="<?= h($eq['uni_url']) ?>"
-                            data-logo="<?= h($eq['log_url']) ?>">
+                            data-img="<?= !empty($eq['uni_url']) ? htmlspecialchars(base64_encode($eq['uni_url'])) : '' ?>"
+                            data-logo="<?= !empty($eq['log_url']) ? htmlspecialchars(base64_encode($eq['log_url'])) : '' ?>">
                             <i class="bi bi-shield-shaded me-2"></i> <?= h($eq['nombre']) ?>
                         </button>
                         <?php endforeach; ?>
@@ -190,8 +190,8 @@ try {
                 document.getElementById('view-apodo').innerText = this.dataset.apodo || 'Sin datos';
                 document.getElementById('view-dt').innerText = this.dataset.dt;
                 document.getElementById('view-est').innerText = this.dataset.est;
-                document.getElementById('view-img').src = this.dataset.img;
-                document.getElementById('view-logo').src = this.dataset.logo;
+                document.getElementById('view-img').src = this.dataset.img ? 'data:image/jpeg;base64,' + this.dataset.img : '';
+                document.getElementById('view-logo').src = this.dataset.logo ? 'data:image/jpeg;base64,' + this.dataset.logo : '';
 
                 msgEspera.style.display = 'none';
                 panelDetalle.style.display = 'block';

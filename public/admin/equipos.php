@@ -17,18 +17,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
     try {
         $pdo->beginTransaction();
 
-        function subirArchivo($file, $tipo) {
+        function obtenerContenidoBinario($file) {
             if (!empty($file['name'])) {
-                if (!is_dir('../../uploads')) mkdir('../../uploads', 0777, true);
-                $nombre = time() . "_" . $tipo . "_" . basename($file['name']);
-                $ruta = "../../uploads/" . $nombre;
-                if (move_uploaded_file($file['tmp_name'], $ruta)) return $ruta;
+                return file_get_contents($file['tmp_name']);
             }
             return null;
         }
 
-        $url_logo_path = subirArchivo($_FILES['file_logo'], "logo");
-        $url_uni_path  = subirArchivo($_FILES['file_uniforme'], "uni");
+        $url_logo_bin = obtenerContenidoBinario($_FILES['file_logo']);
+        $url_uni_bin  = obtenerContenidoBinario($_FILES['file_uniforme']);
 
         if ($id_equipo) {
             $sql = "UPDATE equipos SET nombre=?, apodo=?, fundacion=?, id_entrenador=?, id_estadio=? WHERE id_equipo=?";
@@ -40,34 +37,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
                 $id_equipo
             ]);
 
-            if ($url_logo_path) {
+            if ($url_logo_bin) {
                 $stmtCheck = $pdo->prepare("SELECT id_logo FROM equipos WHERE id_equipo = ?");
                 $stmtCheck->execute([$id_equipo]);
                 $current_logo_id = $stmtCheck->fetchColumn();
 
                 if ($current_logo_id) {
                     $pdo->prepare("UPDATE logos SET url_logo=? WHERE id_logo=?")
-                        ->execute([$url_logo_path, $current_logo_id]);
+                        ->execute([$url_logo_bin, $current_logo_id]);
                 } else {
                     $stmtIns = $pdo->prepare("INSERT INTO logos (nombre_logo, url_logo) VALUES (?, ?)");
-                    $stmtIns->execute([$_POST['name_equipo'] . " Logo", $url_logo_path]);
+                    $stmtIns->execute([$_POST['name_equipo'] . " Logo", $url_logo_bin]);
                     $new_id_logo = $pdo->lastInsertId();
                     $pdo->prepare("UPDATE equipos SET id_logo=? WHERE id_equipo=?")
                         ->execute([$new_id_logo, $id_equipo]);
                 }
             }
 
-            if ($url_uni_path) {
+            if ($url_uni_bin) {
                 $stmtCheckU = $pdo->prepare("SELECT id_uniforme FROM equipos WHERE id_equipo = ?");
                 $stmtCheckU->execute([$id_equipo]);
                 $current_uni_id = $stmtCheckU->fetchColumn();
 
                 if ($current_uni_id) {
                     $pdo->prepare("UPDATE uniformes SET url_imagen=? WHERE id_uniforme=?")
-                        ->execute([$url_uni_path, $current_uni_id]);
+                        ->execute([$url_uni_bin, $current_uni_id]);
                 } else {
                     $stmtInsU = $pdo->prepare("INSERT INTO uniformes (descripcion, url_imagen) VALUES (?, ?)");
-                    $stmtInsU->execute(["Uniforme " . $_POST['name_equipo'], $url_uni_path]);
+                    $stmtInsU->execute(["Uniforme " . $_POST['name_equipo'], $url_uni_bin]);
                     $new_id_uni = $pdo->lastInsertId();
                     $pdo->prepare("UPDATE equipos SET id_uniforme=? WHERE id_equipo=?")
                         ->execute([$new_id_uni, $id_equipo]);
@@ -76,16 +73,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) {
             $status = "updated";
         } else {
             $id_logo_db = null;
-            if ($url_logo_path) {
+            if ($url_logo_bin) {
                 $stmt = $pdo->prepare("INSERT INTO logos (nombre_logo, url_logo) VALUES (?, ?)");
-                $stmt->execute([$_POST['name_equipo'] . " Logo", $url_logo_path]);
+                $stmt->execute([$_POST['name_equipo'] . " Logo", $url_logo_bin]);
                 $id_logo_db = $pdo->lastInsertId();
             }
 
             $id_uni_db = null;
-            if ($url_uni_path) {
+            if ($url_uni_bin) {
                 $stmt = $pdo->prepare("INSERT INTO uniformes (descripcion, url_imagen) VALUES (?, ?)");
-                $stmt->execute(["Uniforme " . $_POST['name_equipo'], $url_uni_path]);
+                $stmt->execute(["Uniforme " . $_POST['name_equipo'], $url_uni_bin]);
                 $id_uni_db = $pdo->lastInsertId();
             }
 
@@ -225,7 +222,7 @@ $equipos = $pdo->query("SELECT e.*, ent.nombre as nom_ent, ent.apellido as ape_e
                         <tr class="text-info">
                             <th>IDENTIDAD</th>
                             <th>FUNDACIÓN</th>
-                            <th>ESTRATEGIA (DT)</th>
+                            <th>ENTRENADOR</th>
                             <th>LOCALÍA</th>
                             <th class="text-center">GESTIÓN</th>
                         </tr>

@@ -29,12 +29,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $url_imagen = null;
         if (!empty($_FILES['file_estadio']['name'])) {
-            if (!is_dir('../../uploads')) mkdir('../../uploads', 0777, true);
-            $nombre_img = time() . "_stadium_" . $_FILES['file_estadio']['name'];
-            $ruta = "../../uploads/" . $nombre_img;
-            if (move_uploaded_file($_FILES['file_estadio']['tmp_name'], $ruta)) {
-                $url_imagen = $ruta;
-            }
+            $contenido_binario = file_get_contents($_FILES['file_estadio']['tmp_name']);
+            $url_imagen = $contenido_binario;
         }
 
         if ($id_estadio) {
@@ -42,7 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $sql = "UPDATE estadios SET nombre=?, ciudad=?, capacidad=?, url_imagen=? WHERE id_estadio=?";
                 $pdo->prepare($sql)->execute([$nombre, $ciudad, $capacidad, $url_imagen, $id_estadio]);
             } else {
-                $sql = "UPDATE estadios SET nombre=?, ciudad=?, capacidad=? WHERE id_estadio=?";
+                $sql = "UPDATE stadiums SET nombre=?, ciudad=?, capacidad=? WHERE id_estadio=?";
                 $pdo->prepare($sql)->execute([$nombre, $ciudad, $capacidad, $id_estadio]);
             }
             $msg = "updated";
@@ -131,6 +127,7 @@ $estadios = $pdo->query("SELECT * FROM estadios ORDER BY nombre ASC")->fetchAll(
                 <table class="table">
                     <thead>
                         <tr class="text-info">
+                            <th>IMAGEN</th>
                             <th>ESTADIO</th>
                             <th>UBICACIÓN</th>
                             <th>CAPACIDAD</th>
@@ -140,6 +137,12 @@ $estadios = $pdo->query("SELECT * FROM estadios ORDER BY nombre ASC")->fetchAll(
                     <tbody>
                         <?php foreach ($estadios as $es): ?>
                         <tr>
+                            <td>
+                                <?php if (!empty($es['url_imagen'])): ?>
+                                <img src="data:image/jpeg;base64,<?= base64_encode($es['url_imagen']) ?>" 
+                                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 8px;">
+                                <?php endif; ?>
+                            </td>
                             <td class="fw-bold"><?= h($es['nombre']) ?></td>
                             <td><i class="bi bi-geo-alt me-1"></i> <?= h($es['ciudad']) ?></td>
                             <td><i class="bi bi-people-fill me-1"></i> <?= number_format($es['capacidad']) ?></td>
@@ -174,6 +177,10 @@ $estadios = $pdo->query("SELECT * FROM estadios ORDER BY nombre ASC")->fetchAll(
                 </div>
                 <div class="modal-body row g-3">
                     <input type="hidden" name="id_estadio" id="edit_id">
+                    <div class="col-md-12 text-center mb-3">
+                        <label class="data-label">IMAGEN ACTUAL</label><br>
+                        <img id="edit_imagen_preview" src="" style="max-width: 200px; max-height: 150px; border-radius: 8px; display: none;">
+                    </div>
                     <div class="col-md-6">
                         <label class="data-label">NOMBRE DEL ESTADIO</label>
                         <input type="text" name="nombre" id="edit_nombre" class="form-control">
@@ -208,6 +215,14 @@ $estadios = $pdo->query("SELECT * FROM estadios ORDER BY nombre ASC")->fetchAll(
             document.getElementById('edit_nombre').value = data.nombre;
             document.getElementById('edit_ciudad').value = data.ciudad;
             document.getElementById('edit_capacidad').value = data.capacidad;
+            
+            const imgPreview = document.getElementById('edit_imagen_preview');
+            if (data.url_imagen) {
+                imgPreview.src = 'data:image/jpeg;base64,' + btoa(String.fromCharCode.apply(null, new Uint8Array(data.url_imagen)));
+                imgPreview.style.display = 'inline-block';
+            } else {
+                imgPreview.style.display = 'none';
+            }
         });
     });
     </script>

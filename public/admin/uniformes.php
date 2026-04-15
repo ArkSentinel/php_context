@@ -27,12 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $url_imagen = null;
         if (!empty($_FILES['file_uniforme']['name'])) {
-            if (!is_dir('../../uploads')) mkdir('../../uploads', 0777, true);
-            $nombre_img = time() . "_kit_" . $_FILES['file_uniforme']['name'];
-            $ruta = "../../uploads/" . $nombre_img;
-            if (move_uploaded_file($_FILES['file_uniforme']['tmp_name'], $ruta)) {
-                $url_imagen = $ruta;
-            }
+            $contenido_binario = file_get_contents($_FILES['file_uniforme']['tmp_name']);
+            $url_imagen = $contenido_binario;
         }
 
         if ($id_uniforme) {
@@ -137,7 +133,9 @@ $uniformes = $pdo->query("SELECT * FROM uniformes ORDER BY id_uniforme DESC")->f
                         <?php foreach ($uniformes as $uni): ?>
                         <tr>
                             <td>
-                                <img src="<?= h($uni['url_imagen']) ?>" class="img-preview" alt="Kit">
+                                <?php if (!empty($uni['url_imagen'])): ?>
+                                <img src="data:image/jpeg;base64,<?= base64_encode($uni['url_imagen']) ?>" class="img-preview" alt="Kit">
+                                <?php endif; ?>
                             </td>
                             <td class="fw-bold"><?= h($uni['descripcion']) ?></td>
                             <td class="text-center">
@@ -171,6 +169,10 @@ $uniformes = $pdo->query("SELECT * FROM uniformes ORDER BY id_uniforme DESC")->f
                 </div>
                 <div class="modal-body row g-3">
                     <input type="hidden" name="id_uniforme" id="edit_id">
+                    <div class="col-12 text-center mb-3">
+                        <label class="data-label">IMAGEN ACTUAL</label><br>
+                        <img id="edit_imagen_preview" src="" style="max-width: 150px; max-height: 150px; border-radius: 8px; display: none;">
+                    </div>
                     <div class="col-12">
                         <label class="data-label">Descripción</label>
                         <input type="text" name="descripcion" id="edit_descripcion" class="form-control">
@@ -195,6 +197,14 @@ $uniformes = $pdo->query("SELECT * FROM uniformes ORDER BY id_uniforme DESC")->f
             const data = JSON.parse(this.getAttribute('data-json'));
             document.getElementById('edit_id').value = data.id_uniforme;
             document.getElementById('edit_descripcion').value = data.descripcion;
+            
+            const imgPreview = document.getElementById('edit_imagen_preview');
+            if (data.url_imagen) {
+                imgPreview.src = 'data:image/jpeg;base64,' + btoa(String.fromCharCode.apply(null, new Uint8Array(data.url_imagen)));
+                imgPreview.style.display = 'inline-block';
+            } else {
+                imgPreview.style.display = 'none';
+            }
         });
     });
     </script>

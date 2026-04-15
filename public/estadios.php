@@ -171,7 +171,13 @@ $estadios_json = json_encode($estadios_raw);
                         new Intl.NumberFormat().format(estadio.capacidad) + " Espectadores";
 
                     if (estadio.url_imagen && estadio.url_imagen.trim() !== "") {
-                        fotoEstadio.src = estadio.url_imagen;
+                        // Convertir binario a base64 para mostrar
+                        const bytes = new Uint8Array(estadio.url_imagen);
+                        let binary = '';
+                        for (let i = 0; i < bytes.byteLength; i++) {
+                            binary += String.fromCharCode(bytes[i]);
+                        }
+                        fotoEstadio.src = 'data:image/jpeg;base64,' + btoa(binary);
                     } else {
                         fotoEstadio.src = 'https://via.placeholder.com/800x400/300000/FFFFFF?text=Imagen+No+Disponible';
                     }
