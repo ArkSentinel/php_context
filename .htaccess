@@ -1,0 +1,21 @@
+Options -MultiViews
+RewriteEngine On
+RewriteBase /
+
+# Si el archivo existe en la raíz, servirlo directamente
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Rutas directas para archivos estáticos
+RewriteRule ^css/(.*)$ public/css/$1 [L]
+RewriteRule ^uploads/(.*)$ public/uploads/$1 [L]
+RewriteRule ^imagenes/(.*)$ public/imagenes/$1 [L]
+
+# Redirigir index raíz a equipos (página principal)
+RewriteRule ^$ public/equipos.php [L]
+
+# Redirigir todo lo demás a public/
+RewriteRule ^(.*)$ public/$1 [QSA,L]

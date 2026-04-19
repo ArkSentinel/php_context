@@ -15,5 +15,5 @@ if (ini_get("session.use_cookies")) {
 session_destroy();
 
 ob_end_clean();
-header("Location: /index.php");
+header("Location: /equipos.php");
 exit;

@@ -4,7 +4,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
 ?>
 <nav class="navbar navbar-expand-lg navbar-dark shadow-sm" style="background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, rgba(0,0,0,0.8) 100%); backdrop-filter: blur(10px); border-bottom: 1px solid rgba(0, 251, 255, 0.3);">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold" href="/index.php" style="text-shadow: 0 0 10px #00fbff;">
+        <a class="navbar-brand fw-bold" href="/equipos.php" style="text-shadow: 0 0 10px #00fbff;">
             <i class="bi bi-cpu-fill me-2"></i>JABULANI FILES
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -26,7 +26,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     </li>
                 <?php else: ?>
                     <li class="nav-item">
-                        <a class="nav-link text-uppercase small fw-bold" href="/index.php">Equipos</a>
+                        <a class="nav-link text-uppercase small fw-bold" href="/equipos.php">Equipos</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-uppercase small fw-bold" href="/estadios.php">Estadios</a>
